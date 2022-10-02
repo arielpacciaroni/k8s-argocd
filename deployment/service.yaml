@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: k8s-argocd-service
 spec:
   selector:
-    app.kubernetes.io/name: k8s-argocd-deployment
+    app.kubernetes.io/name: k8s-argocd
   type: LoadBalancer
   ports:
     - protocol: TCP
