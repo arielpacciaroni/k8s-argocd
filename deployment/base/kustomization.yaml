@@ -3,10 +3,3 @@ kind: Kustomization
 resources:
 - service.yaml
 - deployment.yaml
-images:
-- name: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd:1.1.0
-  newName: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd
-  newTag: 1.2.0
-- name: k8s-argocd-app
-  newName: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd
-  newTag: 5da7f7af28c968ade10b983573cd45f04be22a0f

@@ -65,7 +65,7 @@ jobs:
         ECR_REPOSITORY: k8s-argocd
       run: |
        cd deployment/base
-       kustomize edit set image k8s-argocd-app=$ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+       kustomize edit set image $ECR_REGISTRY/$ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
        cat kustomization.yaml
         
     - name: Commit files
