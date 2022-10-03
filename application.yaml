@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/batidodecoco/k8s-argocd.git
     targetRevision: HEAD
-    path: deployment
+    path: deployment/base
   destination:
     server: https://kubernetes.default.svc
     namespace: k8s-argocd # Namespace for the application

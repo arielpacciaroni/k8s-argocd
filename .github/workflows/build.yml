@@ -14,20 +14,15 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Declare some variables
-      id: vars
-      shell: bash
-      run: |
-        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      
-    - name: Find and Replace
-      uses: jacobtomlinson/gha-find-replace@v2
+    - name: Kustomize Build
+      uses: karancode/kustomize-github-action@master
       with:
-        find: "${TAG}"
-        replace: ${{ steps.vars.outputs.sha_short }}
-        include: "deployment/**"
-        regex: true
+        kustomize_version: '3.0.0'
+        kustomize_build_dir: './deployment'
+        kustomize_comment: true
+        kustomize_output_file: "gitops/rendered.yaml"
+        kustomize_build_options: "--load_restrictor none"
+        enable_alpha_plugins: true
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -44,7 +39,53 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: k8s-argocd
-        IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
+        IMAGE_TAG: $GITHUB_SHA
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Setup Kustomize
+      uses: imranismail/setup-kustomize@v1
+      with:
+        kustomize-version: "3.6.1"
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Update Kubernetes resources
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: k8s-argocd
+      run: |
+       cd deployment/base
+       kustomize edit set image k8s-argocd-app=$ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+       cat kustomization.yaml
+        
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -am "Bump docker tag"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}

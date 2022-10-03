@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: k8s-argocd-app
-          image: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd:${TAG}
+          image: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
