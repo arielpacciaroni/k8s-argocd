@@ -6,4 +6,4 @@ resources:
 images:
 - name: k8s-argocd-app
   newName: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd
-  newTag: 8adb5986799cf5ffe8fcb434e4f0cb64dce3f1ab
+  newTag: 6975a0194af842c154a7665f27fdcd180117f806
