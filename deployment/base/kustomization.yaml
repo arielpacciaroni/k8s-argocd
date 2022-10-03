@@ -4,6 +4,6 @@ resources:
 - service.yaml
 - deployment.yaml
 images:
-- name: k8s-argocd-app
+- name: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd:1.1.0
   newName: 091733698341.dkr.ecr.us-east-1.amazonaws.com/k8s-argocd
-  newTag: 6975a0194af842c154a7665f27fdcd180117f806
+  newTag: 1.2.0
