@@ -14,16 +14,6 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Kustomize Build
-      uses: karancode/kustomize-github-action@master
-      with:
-        kustomize_version: '3.0.0'
-        kustomize_build_dir: './deployment'
-        kustomize_comment: true
-        kustomize_output_file: "gitops/rendered.yaml"
-        kustomize_build_options: "--load_restrictor none"
-        enable_alpha_plugins: true
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
